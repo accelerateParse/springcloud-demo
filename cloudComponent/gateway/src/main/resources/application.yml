@@ -1,0 +1,60 @@
+spring:
+  application:
+    name: cloud-gateway
+  cloud:
+    gateway:
+      locator:
+        enabled: false
+          lower-case-service-id: true
+        routes:
+            - id: userservice
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/test/**
+                # localhost:8080/test/hello
+              filters:
+                # 会将端口号后面Mappping 第一部分profile test
+                - StripPrefix=1
+      globalcors:
+        # 跨域配置
+        cors-configurations:
+          '[/**]':
+            allowed-origins:
+              - "http://localhost:8080"
+              - "http://www.baidu.com"
+              - "*"
+            # 比如cookie,authorization 之类的认证信息
+            allow-credentials: true
+            allow-headers: "*"
+            allow-methods: "*"
+            expose-headers: "*"
+            # 表示Option可以在浏览器缓存时间 秒
+            max-age: 600
+
+
+  redis:
+    host: 192.168.175.100
+    port: 6379
+    database: 0
+    password: 123456
+  main:
+    allow-bean-definition-overriding: true
+server:
+  port: 20004
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:20000/eurake/
+
+# 开启所有actuator-endpoint
+management:
+  endpoint:
+    health:
+      show-detalis: always
+  endponits:
+    web:
+      exposure:
+        include: '*'
+  security:
+    enabled: false
