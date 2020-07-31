@@ -1,4 +1,4 @@
-package com.prey.cloud.pojo;
+package com.prey.cloud.auth.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,11 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Account {
 
-    private String username;
-
-    private String token;
-
-    private String refreshToken;
+    private String userId;
 
     private boolean skipVerification =false;
 }

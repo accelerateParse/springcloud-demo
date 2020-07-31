@@ -1,21 +1,25 @@
 package com.prey.cloud.auth.service.impl;
 
-import com.prey.cloud.pojo.Account;
-import com.prey.cloud.pojo.AuthResponse;
-import com.prey.cloud.pojo.ResponseCode;
-import com.prey.cloud.service.AuthService;
+import com.prey.cloud.auth.pojo.Account;
+import com.prey.cloud.auth.pojo.AuthResponse;
+import com.prey.cloud.auth.pojo.ResponseCode;
+import com.prey.cloud.auth.service.AuthService;
+import com.prey.cloud.auth.util.RequestContextUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RestController;
 
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
 /**
  * @author prey
  * @description:
  **/
+@Service
 public class AuthServiceImpl implements AuthService {
 
     @Autowired
@@ -24,28 +28,39 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private RedisTemplate redisTemplate;
 
+
+    public static final String RefreshToken = "RefreshToken";
+
+    public static final String Authorization = "Authorization";
+
+    public static final String USER_TOKEN = "USER_TOKEN-";
+
+
+
     /**
      * @param:
      * @description: 登录时颁发token
      */
     @Override
-    @PostMapping("/login")
-    @ResponseBody
-    public AuthResponse login(@RequestParam String username,
-                              @RequestParam String password){
-        Account account = Account.builder()
-                .username(username)
-                .build();
-        // todo 验证 username、password
+    public AuthResponse tokenize(String userId){
 
+        Account account = Account.builder()
+                .userId(userId)
+                .build();
+
+        HttpServletResponse response = RequestContextUtil.getHttpServletResponse();
         // 生成token 并存储到redis中
         String token = jwtService.token(account);
-        redisTemplate.opsForValue().set(account.getRefreshToken(),account);
+        // 用于重置的即将失效token 的 refreshToken
+        String refreshToken = UUID.randomUUID().toString();
 
-        account.setToken(token);
+        redisTemplate.opsForValue().set(refreshToken,account);
+        redisTemplate.opsForValue().set(USER_TOKEN+userId,account);
 
-        // 设置下token即将过期重置用于重置的refreshToken
-        account.setRefreshToken(UUID.randomUUID().toString());
+        // 神不知鬼不觉将token放入请求头，不用前端知道
+        response.setHeader(RefreshToken, refreshToken);
+        response.setHeader(Authorization, token);
+
         return  AuthResponse.builder().account(account).code(ResponseCode.SUCCESS.getCode()).build();
     }
 
@@ -54,36 +69,28 @@ public class AuthServiceImpl implements AuthService {
      * @description: 利用 refreshToken 直接重置token
      */
     @Override
-    @PostMapping("/refresh")
-    @ResponseBody
-    public AuthResponse refresh(@RequestParam String refreshToken){
+    public AuthResponse refresh(String refreshToken){
 
         Account account = (Account) redisTemplate.opsForValue().get(refreshToken);
         if(account == null){
             return AuthResponse.builder().code(ResponseCode.USER_NOT_FOUND.getCode()).build();
         }
-        String jwt = jwtService.token(account);
-        account.setToken(jwt);
-        account.setRefreshToken(UUID.randomUUID().toString());
-        redisTemplate.delete(refreshToken);
-        redisTemplate.opsForValue().set(account.getRefreshToken(),account);
-        return AuthResponse.builder().account(account).code(ResponseCode.SUCCESS.getCode()).build();
+        return tokenize(account.getUserId());
     }
 
     @Override
-    @PostMapping("/remove")
-    @ResponseBody
     public AuthResponse delete(Account account) {
         AuthResponse token = new AuthResponse();
         token.setCode(ResponseCode.SUCCESS.getCode());
         if(account.isSkipVerification()){
-            redisTemplate.delete("USER_TOKEN" + account.getUsername());
+            redisTemplate.delete(USER_TOKEN + account.getUserId());
 
         }else {
-            token = verify(account.getToken(),account.getUsername());
+            HttpServletRequest request = RequestContextUtil.getHttpServletRequest();
+            token = verify(request.getHeader(Authorization),account.getUserId());
             if(token.getCode() == ResponseCode.SUCCESS.getCode()){
-                redisTemplate.delete("USER_TOKEN" + account.getUsername());
-                redisTemplate.delete(account.getRefreshToken());
+                redisTemplate.delete(USER_TOKEN + account.getUserId());
+                redisTemplate.delete(request.getHeader(RefreshToken));
             }else {
                 token.setCode(ResponseCode.USER_NOT_FOUND.getCode());
             }
@@ -96,9 +103,7 @@ public class AuthServiceImpl implements AuthService {
      * @description: 鉴定token合法性
      */
     @Override
-    @PostMapping("/verify")
-    @ResponseBody
-    public AuthResponse verify(@RequestParam String token, @RequestParam String username){
+    public AuthResponse verify( String token, String username){
         Boolean result = jwtService.verify(token, username);
         return AuthResponse.builder()
                 .code(result ? ResponseCode.SUCCESS.getCode() : ResponseCode.USER_NOT_FOUND.getCode())

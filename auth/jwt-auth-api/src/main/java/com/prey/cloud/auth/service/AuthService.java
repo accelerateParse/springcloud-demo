@@ -1,7 +1,7 @@
-package com.prey.cloud.service;
+package com.prey.cloud.auth.service;
 
-import com.prey.cloud.pojo.Account;
-import com.prey.cloud.pojo.AuthResponse;
+import com.prey.cloud.auth.pojo.Account;
+import com.prey.cloud.auth.pojo.AuthResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,8 +19,7 @@ public interface AuthService {
      */
     @PostMapping("/token")
     @ResponseBody
-    public AuthResponse login(@RequestParam("username") String username,
-                              @RequestParam("password") String password);
+    public AuthResponse tokenize(@RequestParam("userId")String userId);
     /**
      * @param:
      * @description: 鉴定token是否合法

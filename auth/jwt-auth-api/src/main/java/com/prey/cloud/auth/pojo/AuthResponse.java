@@ -1,4 +1,4 @@
-package com.prey.cloud.pojo;
+package com.prey.cloud.auth.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

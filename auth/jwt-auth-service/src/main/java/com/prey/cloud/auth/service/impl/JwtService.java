@@ -3,7 +3,7 @@ package com.prey.cloud.auth.service.impl;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.prey.cloud.pojo.Account;
+import com.prey.cloud.auth.pojo.Account;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +18,7 @@ import java.util.Date;
 public class JwtService {
 
     public static final long TOKEN_EXP_TIME = 60000;
-    public static final String USERNAME = "username";
+    public static final String USERId = "userId";
     // 生成环境不能这么用
     public static final String KEY = "changeIt";
     public static final String ISSUER = "changeIt";
@@ -35,22 +35,22 @@ public class JwtService {
                 .withIssuer(ISSUER)
                 .withIssuedAt(now)
                 .withExpiresAt(new Date(now.getTime() + TOKEN_EXP_TIME))
-                .withClaim(USERNAME, acct.getUsername())
+                .withClaim(USERId, acct.getUserId())
                 .sign(algorithm);
-        log.info("jwt generated user={}", acct.getUsername());
+        log.info("jwt generated user={}", acct.getUserId());
         return token;
     }
 
     /**
      * @description: 利用jwt鉴定token合法性
      */
-    public Boolean verify(String token, String username){
-        log.info("verifying jwt - username={}",username);
+    public Boolean verify(String token, String userId){
+        log.info("verifying jwt - username={}",userId);
         try {
             Algorithm algorithm = Algorithm.HMAC256(KEY);
             JWTVerifier verifier = JWT.require(algorithm)
                     .withIssuer(ISSUER)
-                    .withClaim(USERNAME,username)
+                    .withClaim(USERId,userId)
                     .build();
             verifier.verify(token);
             return true;
