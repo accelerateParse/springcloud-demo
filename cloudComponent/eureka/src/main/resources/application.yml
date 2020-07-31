@@ -1,0 +1,17 @@
+server:
+  port: 20000
+spring:
+  application:
+    name: eureka-server
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+  server:
+    #强制关闭服务自保
+    enable-self-preservation: false
+    #每隔多久触发一次服务剔除
+    eviction-interval-timer-in-ms: 20000
