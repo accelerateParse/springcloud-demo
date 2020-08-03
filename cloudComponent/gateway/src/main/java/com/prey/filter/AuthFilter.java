@@ -1,7 +1,7 @@
-package com.prey.cloud.filter;
+package com.prey.filter;
 
 
-import com.prey.cloud.auth.service.AuthService;
+import com.prey.auth.service.AuthService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

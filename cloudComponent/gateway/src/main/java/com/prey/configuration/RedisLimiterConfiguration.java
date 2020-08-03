@@ -1,4 +1,4 @@
-package com.prey.cloud.configuration;
+package com.prey.configuration;
 
 import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
 import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;

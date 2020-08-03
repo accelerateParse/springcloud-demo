@@ -1,6 +1,6 @@
-package com.prey.cloud.configuration;
+package com.prey.configuration;
 
-import com.prey.cloud.filter.AuthFilter;
+import com.prey.filter.AuthFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;

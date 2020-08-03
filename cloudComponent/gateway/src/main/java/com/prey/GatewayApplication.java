@@ -1,6 +1,6 @@
-package com.prey.cloud;
+package com.prey;
 
-import com.prey.cloud.auth.service.AuthService;
+import com.prey.auth.service.AuthService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;

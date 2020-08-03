@@ -1,4 +1,4 @@
-package com.prey.cloud;
+package com.prey;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
