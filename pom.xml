@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.example</groupId>
+    <groupId>com.prey</groupId>
     <artifactId>springcloud-is-ready</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
@@ -13,6 +13,14 @@
         <module>cloudComponent/gateway</module>
         <module>auth/jwt-auth-api</module>
         <module>auth/jwt-auth-service</module>
+        <module>server/user/user-api</module>
+        <module>server/user/user-pojo</module>
+        <module>server/user/user-service</module>
+        <module>server/user/user-mapper</module>
+        <module>server/user/user-web</module>
+        <module>common/common</module>
+        <module>common/web-component</module>
+        <module>server/user/user-pojo</module>
     </modules>
 
     <dependencyManagement>
@@ -45,6 +53,43 @@
             <artifactId>gson</artifactId>
             <version>2.6</version>
         </dependency>
+
+        <!-- swagger2 配置 -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+
+        <!-- apache 工具类 -->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>1.3.2</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>
