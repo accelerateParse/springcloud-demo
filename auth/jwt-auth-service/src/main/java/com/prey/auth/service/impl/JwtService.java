@@ -1,9 +1,9 @@
-package com.prey.cloud.auth.service.impl;
+package com.prey.auth.service.impl;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.prey.cloud.auth.pojo.Account;
+import com.prey.auth.pojo.Account;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

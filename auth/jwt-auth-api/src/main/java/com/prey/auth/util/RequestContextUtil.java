@@ -1,4 +1,4 @@
-package com.prey.cloud.auth.util;
+package com.prey.auth.util;
 
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;

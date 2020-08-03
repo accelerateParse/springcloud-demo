@@ -1,4 +1,4 @@
-package com.prey.cloud.auth.pojo;
+package com.prey.auth.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Account {
+public class AuthResponse {
 
-    private String userId;
+    private Account account;
 
-    private boolean skipVerification =false;
+    private int code;
 }

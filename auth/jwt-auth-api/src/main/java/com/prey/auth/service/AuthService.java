@@ -1,7 +1,7 @@
-package com.prey.cloud.auth.service;
+package com.prey.auth.service;
 
-import com.prey.cloud.auth.pojo.Account;
-import com.prey.cloud.auth.pojo.AuthResponse;
+import com.prey.auth.pojo.AuthResponse;
+import com.prey.auth.pojo.Account;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +18,6 @@ public interface AuthService {
      * @description: 登录时创建token
      */
     @PostMapping("/token")
-    @ResponseBody
     public AuthResponse tokenize(@RequestParam("userId")String userId);
     /**
      * @param:
@@ -26,7 +25,7 @@ public interface AuthService {
      */
     @GetMapping("/verify")
     public AuthResponse verify(@RequestParam("token") String token,
-                               @RequestParam("username") String username);
+                               @RequestParam("userId") String userId);
 
     /**
      * @param:
@@ -41,4 +40,6 @@ public interface AuthService {
      */
     @DeleteMapping("/clear")
     public AuthResponse delete(@RequestBody Account account);
+
+    public String getUserId();
 }

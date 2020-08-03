@@ -1,4 +1,4 @@
-package com.prey.cloud.auth.pojo;
+package com.prey.auth.pojo;
 
 /**
  * @author prey
