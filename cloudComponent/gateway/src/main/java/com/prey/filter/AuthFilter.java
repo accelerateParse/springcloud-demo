@@ -1,6 +1,7 @@
 package com.prey.filter;
 
 
+import com.prey.auth.pojo.AuthResponse;
 import com.prey.auth.service.AuthService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
