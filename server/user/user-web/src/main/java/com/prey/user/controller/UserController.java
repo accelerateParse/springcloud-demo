@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.*;
  * @author prey
  * @description:
  **/
+@Api(value = "用户注册", tags = {"用于注册登录的相关接口"})
 @RestController
 @RequestMapping("user")
-@Api(tags = "用户接口")
 @Slf4j
 public class UserController {
 
@@ -33,7 +33,7 @@ public class UserController {
     @PutMapping("/login")
     public JSONResult login(@RequestParam(value = "account",required = true)String account,
                             @RequestParam(value = "password",required = true)String password){
-        User user = userService.login(account,password);
+        User user = userService.passport(account,password);
         if(user == null){
             JSONResult.errorMsg("账号或密码错误");
         }
@@ -48,13 +48,13 @@ public class UserController {
 
     @ApiOperation("修改用户名")
     @PutMapping("/username")
-    public JSONResult updateUsername(@RequestParam(value = "username")String username){
+    public JSONResult updateUserName(@RequestParam(value = "username")String username){
         // 通过 请求的header获取 token 再获取 userId
         String userId = authService.getUserId();
         if(StringUtils.isBlank(userId)){
             return JSONResult.errorMsg("无法获取登录信息");
         }
-        Boolean res = userService.updateUsername(userId,username);
+        Boolean res = userService.updateName(userId,username);
         if(res){
             return JSONResult.ok("修改成功");
         }

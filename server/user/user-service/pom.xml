@@ -27,9 +27,15 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jwt-auth-api</artifactId>
+            <artifactId>jwt-auth-service</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+        </dependency>
+
     </dependencies>
 
 
