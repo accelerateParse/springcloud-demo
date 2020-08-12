@@ -41,5 +41,6 @@ public interface AuthService {
     @DeleteMapping("/clear")
     public AuthResponse delete(@RequestBody Account account);
 
+    @GetMapping("/userId")
     public String getUserId();
 }
