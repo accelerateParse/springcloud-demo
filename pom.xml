@@ -20,6 +20,9 @@
         <module>server/user/user-web</module>
         <module>common/common</module>
         <module>common/web-component</module>
+        <module>cloudComponent/hystrix-turbine</module>
+        <module>cloudComponent/hystrix-dashboard</module>
+        <module>server/search/elasticsearch</module>
     </modules>
 
     <dependencyManagement>
