@@ -1,92 +1,78 @@
 package com.prey.service.impl;
 
-
 import com.prey.pojo.JSONResult;
-import com.prey.pojo.PagedResult;
 import com.prey.pojo.Product;
+import com.prey.pojo.bo.ProductBO;
 import com.prey.service.ProductService;
-import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.FieldSortBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
-import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
-import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
-import org.springframework.data.elasticsearch.core.query.*;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.document.Document;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
-/**
- * @description: 我把以前使用6.8.4es代码copy过来有少许改动，没测试很可能有问题
- * @author: prey
- * @create: 2020/3/30  11:47
- **/
 @Service
 public class ProductServiceImpl implements ProductService {
 
     @Autowired
-    private ElasticsearchTemplate esTemplate;
+    private ElasticsearchRestTemplate esTemplate;
 
     @Override
     public JSONResult create() {
-        esTemplate.putMapping(Product.class);
-        return JSONResult.ok();
+        Document b = esTemplate.indexOps(Product.class).createMapping(Product.class);
+        boolean putMapping = esTemplate.indexOps(Product.class).putMapping(b);
+        return JSONResult.ok(putMapping);
     }
 
     @Override
-    public JSONResult add(Product req) {
-
-            IndexQuery indexQuery = new IndexQueryBuilder().withObject(req).build();
-            // IndexCoordinates.of("product") 指定对应的index,index相当于数据库的表, 6.8.4 elasticsearchTemplate不需要填该参数
-            esTemplate.index(indexQuery,IndexCoordinates.of("product"));
-            return JSONResult.ok();
+    public JSONResult add(ProductBO product) {
+        Product p = new Product(product.getId(), product.getName(), product.getCategory(),product.getTag(), product.getPrice());
+        Product save = esTemplate.save(p);
+        return JSONResult.ok(save);
     }
 
     @Override
     public JSONResult select(String keyword) {
-        Pageable pageable = PageRequest.of(0, 20);
+        Pageable pageable = PageRequest.of(0, 10);
+
+        SortBuilder sortBuilder = new FieldSortBuilder("price")
+                .order(SortOrder.ASC);
         QueryBuilder queryBuilder = QueryBuilders.boolQuery()
-                .should(QueryBuilders.matchQuery("productName.ik_pinyin",keyword).boost(1))
-                .should(QueryBuilders.matchQuery("category.ik_pinyin",keyword).boost(2));
-
-        Query  query= new NativeSearchQueryBuilder()
-                        .withQuery(queryBuilder)
-                        .withPageable(pageable)
-                        .withSort(SortBuilders.scoreSort())
-                        .build();
-
-        AggregatedPage<Product> pagedProduct = esTemplate.queryForPage(query, Product.class,IndexCoordinates.of("product"));
-
-        PagedResult result = new PagedResult();
-        result.setList(pagedProduct.getContent());
-        result.setPage(pagedProduct.getNumber());
-        result.setRecords(pagedProduct.getTotalElements());
-        result.setTotalPages(pagedProduct.getTotalPages());
-        return JSONResult.ok(result);
+                .should(QueryBuilders.matchQuery("name.ik_pinyin",keyword).boost(2))
+                .should(QueryBuilders.matchQuery("name",keyword).boost(2))
+                //.should(QueryBuilders.matchQuery("category.ik",keyword).boost(1))
+                //.should(QueryBuilders.matchQuery("tag.ik",keyword).boost(1))
+             ;
+        NativeSearchQuery query = new NativeSearchQueryBuilder()
+                .withQuery(queryBuilder)
+                .withPageable(pageable)
+                .withSort(sortBuilder)
+                .build();
+        SearchHits<Product> searchHits = esTemplate.search(query, Product.class);
+        List<SearchHit<Product>> data = searchHits.getSearchHits();
+        return JSONResult.ok(data);
     }
 
-    public JSONResult update(){
-        Map<String , Object> sourceMap = new HashMap<>();
+    @Override
+    public JSONResult test() {
+        Pageable pageable = PageRequest.of(0, 30);
 
-
-        UpdateQuery updateQuery =  UpdateQuery.builder("100")
-                .withParams(sourceMap)
+        NativeSearchQuery query = new NativeSearchQueryBuilder()
+                .withPageable(pageable)
                 .build();
-
-        /* 6.8.4 elasticsearchTemplate 可以使用下面代码
-        UpdateQuery updateQuery = new UpdateQueryBuilder()
-                .withClass(ProductItem.class)
-                .withId(req.getId().toString())
-                .withIndexRequest(indexRequest)
-                .build();*/
-
-
-        esTemplate.update(updateQuery,IndexCoordinates.of("product"));
-        return JSONResult.ok();
+        SearchHits<Product> searchHits = esTemplate.search(query, Product.class);
+        List<SearchHit<Product>> data = searchHits.getSearchHits();
+        return JSONResult.ok(data);
     }
 }

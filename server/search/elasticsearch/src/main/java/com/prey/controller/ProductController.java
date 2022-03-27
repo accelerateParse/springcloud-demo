@@ -2,7 +2,10 @@ package com.prey.controller;
 
 import com.prey.pojo.JSONResult;
 import com.prey.pojo.Product;
+import com.prey.pojo.bo.ProductBO;
 import com.prey.service.ProductService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
  **/
 @RestController
 @RequestMapping("productInfo")
+@Api("product")
 public class ProductController {
 /*
 
@@ -20,7 +24,7 @@ public class ProductController {
 
     step 2 给这个index设置组合分词器
     请求体  注意是put请求不是post get 使用postman进行 格式 ：ip+:9200+index名
-    put http://192.168.175.131:9200/product_info
+    put http://192.168.175.131:9200/product
     {
         "index": {
         "number_of_replicas" : "0",
@@ -85,6 +89,7 @@ public class ProductController {
      *该方法对应实体类设置了对应需要分词字段的采用分词器方式
      */
     @GetMapping("/create")
+    @ApiOperation("create")
     public JSONResult create(){
        return productInfoService.create();
     }
@@ -93,13 +98,22 @@ public class ProductController {
     其他可以看下 https://blog.csdn.net/u013041642/article/details/94416631
     */
     @PostMapping("/add")
-    public JSONResult add(@RequestBody Product product){
+    public JSONResult add(@RequestBody ProductBO product){
         return productInfoService.add(product);
     }
+
+
+
 
 
     @GetMapping("/select")
     public JSONResult select(@RequestParam String keyword){
         return productInfoService.select(keyword);
+    }
+
+
+    @GetMapping("/test")
+    public JSONResult hello(){
+        return productInfoService.test();
     }
 }

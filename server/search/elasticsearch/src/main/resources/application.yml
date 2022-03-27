@@ -1,0 +1,12 @@
+server:
+  port: 8090
+  tomcat:
+    uri-encoding: UTF-8
+
+spring:
+  application:
+    name: service-search
+  elasticsearch:
+    rest:
+      uris:
+        - http://localhost:9200

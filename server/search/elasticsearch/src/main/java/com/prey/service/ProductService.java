@@ -2,7 +2,7 @@ package com.prey.service;
 
 
 import com.prey.pojo.JSONResult;
-import com.prey.pojo.Product;
+import com.prey.pojo.bo.ProductBO;
 
 /**
  * @description:
@@ -13,9 +13,11 @@ public interface ProductService {
 
     JSONResult create();
 
-    JSONResult add(Product product);
+    JSONResult add(ProductBO product);
 
     JSONResult select(String keyword);
+
+    JSONResult test();
 
 
 }
