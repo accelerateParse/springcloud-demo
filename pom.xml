@@ -24,6 +24,7 @@
         <module>cloudComponent/hystrix-dashboard</module>
         <module>server/search/elasticsearch</module>
         <module>server/kafka/kafka</module>
+        <module>server/redis/redis</module>
     </modules>
 
     <dependencyManagement>
