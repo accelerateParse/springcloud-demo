@@ -2,11 +2,26 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="springcloud-is-ready" />
+        <module name="jwt-auth-api" />
+        <module name="web-component" />
+        <module name="eureka" />
+        <module name="user-service" />
+        <module name="user-mapper" />
+        <module name="hystrix-turbine" />
+        <module name="user-api" />
+        <module name="common" />
+        <module name="elasticsearch" />
+        <module name="hystrix-dashboard" />
+        <module name="kafka" />
+        <module name="jwt-auth-service" />
+        <module name="user-pojo" />
+        <module name="user-web" />
+        <module name="gateway" />
       </profile>
     </annotationProcessing>
   </component>
